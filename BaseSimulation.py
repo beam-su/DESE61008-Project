@@ -4,20 +4,10 @@ import matplotlib.pyplot as plt
 from GameTheoryModel import CournotGame, StackelbergGame
 
 # Run simulation for both models
-cournot = CournotGame()
-stackelberg = StackelbergGame()
+cournot_game = CournotGame(n_players=2, cost_params=[0.5, 0.1], initial_guess=[10, 10], bounds=[(0, 50), (0, 50)])
+quantities, price, profits = cournot_game.equilibrium()
+print(f"Cournot Equilibrium Quantities: {quantities}, Price: {price}, Profits: {profits}")
 
-q1_cournot, q2_cournot, p_cournot, profit1_cournot, profit2_cournot = cournot.equilibrium()
-q1_stackelberg, q2_stackelberg, p_stackelberg, profit1_stackelberg, profit2_stackelberg = stackelberg.equilibrium()
-
-print("\nCournot Equilibrium:")
-print(f"Firm A Quantity: {q1_cournot}, Firm B Quantity: {q2_cournot}")
-print(f"Market Price: {p_cournot}")
-print(f"Firm A Profit: {profit1_cournot}, Firm B Profit: {profit2_cournot}")
-
-print("\nStackelberg Equilibrium:")
-print(f"Firm A Quantity (Leader): {q1_stackelberg}, Firm B Quantity (Follower): {q2_stackelberg}")
-print(f"Market Price: {p_stackelberg}")
-print(f"Firm A Profit: {profit1_stackelberg}, Firm B Profit: {profit2_stackelberg}")
-
-#Plots here?
+stackelberg_game = StackelbergGame(n_players=2, cost_params=[0.5, 0.1], initial_guess=[10, 10], bounds=[(0, 50), (0, 50)])
+quantities, price, profits = stackelberg_game.equilibrium()
+print(f"Stackelberg Equilibrium Quantities: {quantities}, Price: {price}, Profits: {profits}")

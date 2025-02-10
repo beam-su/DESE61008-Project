@@ -3,62 +3,60 @@ import matplotlib.pyplot as plt
 from scipy.optimize import minimize
 
 class GameTheoryModel:
-    def __init__(self, alpha_d=100, beta_d=0.5, beta1=0.5, beta2=0.1, initial_guess=[10,10], bounds=[(0,50),(0,50)]):
-        self.alpha_d = alpha_d  # Demand Intercept
-        self.beta_d = beta_d    # Demand Slope
-        self.beta1 = beta1      # Cost coefficient for firm A
-        self.beta2 = beta2      # Cost coefficient for firm B
-        self.initial_guess = initial_guess
-        self.bounds = bounds
-
+    def __init__(self, alpha_d=100, beta_d=0.5, cost_params=None, initial_guess=None, bounds=None, n_players=2):
+        self.alpha_d = alpha_d                                      # Demand Intercept
+        self.beta_d = beta_d                                        # Demand Slope
+        self.n_players = n_players                                  # Number of players
+        self.cost_params = cost_params or [0.5] * n_players         # Check cost parameter input
+        self.initial_guess = initial_guess or [10] * n_players      # Check initial guess input
+        self.bounds = bounds or [(0, 50)] * n_players               # Check boundary input
+    
     def demand_function(self, Q):
-        return (self.alpha_d - Q) / self.beta_d
+        return max((self.alpha_d - Q) / self.beta_d, 0)
     
     def cost_function(self, q, beta):
         return beta * q
-    
+
 class CournotGame(GameTheoryModel):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-
-    def best_response_q1(self, q2):
-        return (self.alpha_d - q2 - self.beta_d * self.beta1) / 2
-
-    def best_response_q2(self, q1):
-        return (self.alpha_d - q1 - self.beta_d * self.beta2) / 2
-
-    def equilibrium(self):
-        # Solve for Nash equilibrium using best response functions
-        q1 = (self.alpha_d - self.beta_d * (self.beta1 + 2 * self.beta2)) / 3
-        q2 = (self.alpha_d - self.beta_d * (self.beta2 + 2 * self.beta1)) / 3
-        Q = q1 + q2
-        p = self.demand_function(Q)
-        profit1 = p * q1 - self.cost_function(q1, self.beta1)
-        profit2 = p * q2 - self.cost_function(q2, self.beta2)
-        
-        return q1, q2, p, profit1, profit2
     
+    def best_response(self, q_others, beta):
+        return max((self.alpha_d - sum(q_others) - self.beta_d * beta) / (self.n_players + 1), 0)
+    
+    def equilibrium(self):
+        quantities = np.zeros(self.n_players)
+        for i in range(self.n_players):
+            q_others = np.delete(quantities, i)
+            quantities[i] = self.best_response(q_others, self.cost_params[i])
+        
+        Q = np.sum(quantities)
+        p = self.demand_function(Q)
+        profits = [float(p * quantities[i] - self.cost_function(quantities[i], self.cost_params[i])) for i in range(self.n_players)]
+        
+        return quantities, float(p), profits
+
 class StackelbergGame(GameTheoryModel):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
     
-    def follower_best_response(self, q1):
-        return max((self.alpha_d - q1 - self.beta_d * self.beta2) / 2, 0)
+    def follower_best_response(self, q_leaders, beta_follower):
+        return max((self.alpha_d - sum(q_leaders) - self.beta_d * beta_follower) / (self.n_players - len(q_leaders) + 1), 0)
     
-    def leader_objective(self, q1):
-        q2 = self.follower_best_response(q1)
-        Q = q1 + q2
+    def leader_objective(self, q_leaders):
+        q_followers = [self.follower_best_response(q_leaders, beta) for beta in self.cost_params[len(q_leaders):]]
+        Q = sum(q_leaders) + sum(q_followers)
         p = self.demand_function(Q)
-        profit1 = p * q1 - self.cost_function(q1, self.beta1)
-        return -profit1
+        profit_leaders = [float(p * q_leaders[i] - self.cost_function(q_leaders[i], self.cost_params[i])) for i in range(len(q_leaders))]
+        return -sum(profit_leaders)
     
     def equilibrium(self):
-        result = minimize(self.leader_objective, [self.initial_guess[0]], bounds=[self.bounds[0]])
-        q1 = result.x[0]
-        q2 = self.follower_best_response(q1)
-        Q = q1 + q2
+        result = minimize(self.leader_objective, self.initial_guess[:1], bounds=self.bounds[:1])
+        q_leaders = result.x
+        q_followers = [self.follower_best_response(q_leaders, beta) for beta in self.cost_params[len(q_leaders):]]
+        quantities = np.concatenate((q_leaders, q_followers))
+        Q = np.sum(quantities)
         p = self.demand_function(Q)
-        profit1 = p * q1 - self.cost_function(q1, self.beta1)
-        profit2 = p * q2 - self.cost_function(q2, self.beta2)
+        profits = [float(p * quantities[i] - self.cost_function(quantities[i], self.cost_params[i])) for i in range(self.n_players)]
         
-        return q1, q2, p, profit1, profit2
+        return quantities, float(p), profits
