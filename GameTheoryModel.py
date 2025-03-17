@@ -3,45 +3,55 @@ import matplotlib.pyplot as plt
 from scipy.optimize import minimize
 
 class GameTheoryModel:
-    def __init__(self, alpha_d=100, beta_d=0.5, cost_params=None, initial_guess=None, bounds=None, n_players=2):
-        self.alpha_d = alpha_d                                      # Demand Intercept
-        self.beta_d = beta_d                                        # Demand Slope
-        self.n_players = n_players                                  # Number of players
-        self.cost_params = cost_params or [0.5] * n_players         # Check cost parameter input
-        self.initial_guess = initial_guess or [10] * n_players      # Check initial guess input
-        self.bounds = bounds or [(0, 50)] * n_players               # Check boundary input
-    
+    def __init__(self, alpha=100, beta=0.5, cost_params=None, initial_guess=None, bounds=None, n=2):
+        self.alpha = alpha  # Demand intercept
+        self.beta = beta    # Demand slope
+        self.n = n          # Number of firms
+        self.cost_params = cost_params if cost_params else [0.5] * n
+        self.initial_guess = initial_guess if initial_guess else [10] * n
+        self.bounds = bounds if bounds else [(0, 50)] * n
+
     def demand_function(self, Q):
-        return max((self.alpha_d - Q) / self.beta_d, 0)
-    
+        """Computes price given total quantity Q"""
+        return max((self.alpha - Q) / self.beta, 0)
+
     def cost_function(self, q, beta):
+        """Computes cost for a firm"""
         return beta * q
 
 class CournotGame(GameTheoryModel):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-    
+
     def best_response(self, q_others, beta):
-        return max((self.alpha_d - sum(q_others) - self.beta_d * beta) / (self.n_players + 1), 0)
-    
-    def equilibrium(self):
-        quantities = np.zeros(self.n_players)
-        for i in range(self.n_players):
-            q_others = np.delete(quantities, i)
-            quantities[i] = self.best_response(q_others, self.cost_params[i])
-        
+        """Computes the best response function for a firm in n-player Cournot competition"""
+        return max((self.alpha - sum(q_others) - self.beta * beta) / self.n, 0)  # Generalized for n players
+
+    def equilibrium(self, tol=1e-4):
+        """Finds Nash equilibrium using an iterative best response method for any number of firms"""
+        quantities = np.array(self.initial_guess)
+        error = 1
+
+        while error > tol:
+            new_quantities = np.array([
+                self.best_response(np.delete(quantities, i), self.cost_params[i])
+                for i in range(self.n)
+            ])
+            error = np.linalg.norm(new_quantities - quantities)
+            quantities = new_quantities
+
         Q = np.sum(quantities)
         p = self.demand_function(Q)
-        profits = [float(p * quantities[i] - self.cost_function(quantities[i], self.cost_params[i])) for i in range(self.n_players)]
-        
-        return quantities, float(p), profits
+        profits = [p * quantities[i] - self.cost_function(quantities[i], self.cost_params[i]) for i in range(self.n)]
+
+        return quantities, p, profits
 
 class StackelbergGame(GameTheoryModel):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
     
     def follower_best_response(self, q_leaders, beta_follower):
-        return max((self.alpha_d - sum(q_leaders) - self.beta_d * beta_follower) / (self.n_players - len(q_leaders) + 1), 0)
+        return max((self.alpha - sum(q_leaders) - self.beta * beta_follower) / (self.n - len(q_leaders) + 1), 0)
     
     def leader_objective(self, q_leaders):
         q_followers = [self.follower_best_response(q_leaders, beta) for beta in self.cost_params[len(q_leaders):]]
@@ -57,6 +67,6 @@ class StackelbergGame(GameTheoryModel):
         quantities = np.concatenate((q_leaders, q_followers))
         Q = np.sum(quantities)
         p = self.demand_function(Q)
-        profits = [float(p * quantities[i] - self.cost_function(quantities[i], self.cost_params[i])) for i in range(self.n_players)]
+        profits = [float(p * quantities[i] - self.cost_function(quantities[i], self.cost_params[i])) for i in range(self.n)]
         
         return quantities, float(p), profits
