@@ -1,3 +1,12 @@
+'''
+Base Model for Cournot Game
+
+This script contains the base model for a Cournot game. It defines the CournotGame class, which is a subclass of the GameTheoryModel class. The CournotGame class implements the demand function, cost function, best response function, and equilibrium computation for a Cournot game with n players.
+
+This script uses the initial parameters given in the project brief to show that our script does work in finding the Nash equilibrium for a Cournot game with two players. 
+
+'''
+
 import numpy as np
 import matplotlib.pyplot as plt
 from GameTheoryModel import CournotGame
