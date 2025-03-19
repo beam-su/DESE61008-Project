@@ -64,7 +64,6 @@ plt.grid()
 plt.show()
 
 # Plot Market Price vs Cost
-plt.figure(figsize=(8, 6))
 plt.plot(cost1, prices, label="Market Price", color="red", linestyle="dashed")
 plt.xlabel("Firm 1 Cost")
 plt.ylabel("Market Price")
@@ -74,7 +73,6 @@ plt.grid()
 plt.show()
 
 # Plot Firm 1 & Firm 2 Profits vs Cost
-plt.figure(figsize=(8, 6))
 plt.plot(cost1, profits1, label="Firm 1 Profit", color="blue", marker='x')
 plt.plot(cost1, profits2, label="Firm 2 Profit", color="orange", marker='x')
 plt.xlabel("Firm 1 Cost")

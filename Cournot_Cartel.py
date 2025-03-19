@@ -50,8 +50,7 @@ for i in n:
     P_ch.append(profit_cheater)
 
 # Plot results
-plt.figure(figsize=(10, 5))
-plt.plot(n, P_cpf, label='Cartel Profit (Per Firm)', marker='x')
+plt.plot(n, P_cpf, label='Cartel Firms Profit', marker='x')
 plt.plot(n, P_nc, label='Non-Cartel Firm Profit', marker='x')
 plt.plot(n, P_ch, label='Cheater Profit', linestyle='dashed', marker='x')
 plt.xlabel('Total Number of Firms')

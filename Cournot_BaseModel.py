@@ -19,8 +19,8 @@ players = 2
 
 cournot = CournotGame(alpha=alpha, beta=beta, cost_params=[beta1, beta2], n=players)
 
-q1 = np.linspace(0, 50, 100)
-q2 = np.linspace(0, 50, 100)
+q1 = np.linspace(0, 80, 200)
+q2 = np.linspace(0, 80, 200)
 br1 = [cournot.best_response([q], beta1) for q in q2]
 br2 = [cournot.best_response([q], beta2) for q in q1]
 
@@ -41,7 +41,6 @@ p = cournot.demand_function(Q)
 profits = [p * guess[i] - cournot.cost_function(guess[i], cournot.cost_params[i]) for i in range(players)]
 
 # Plot results
-plt.figure(figsize=(10, 6))
 plt.plot(q2, br1, label="Firm 1 Best Response")
 plt.plot(br2, q1, label="Firm 2 Best Response")
 plt.scatter(guess[1], guess[0], color='red', label="Nash Equilibrium", marker='x')
