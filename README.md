@@ -5,14 +5,17 @@ DESE61008 Game Theory and Mechanism Coursework: Cournot and Stackelberg games
 
 <!-- File Directory & Explainations -->
 ## File Directory
-- **`GameTheoryModel`**: Class defining different games
-- **`BaseSimulation`**: Simulation of Cournot and Stackelberg Game under the given initial conditions
+- **`GameTheoryModel.py`**: Class defining different games
+- **`Cournot_BaseModel.py`**: Simulation of Cournot Game under the given initial conditions
+- **`Cournot_costeff.py`**: Simulation of Cournot Game wiht varying cost efficiency
+- **`Cournot_Cartel.py`**: Extension task to see the relationship between cartel's profit and varying number of firms (and cheaters performance)
+
 
 <!-- CONTACT -->
 ## Contact
-Raphassit (Beam) Suwiwatchai - beam.suwiwatchai21@imperial.ac.uk
+Raphassit (Beam) Suwiwatchai - [beam.suwiwatchai21@imperial.ac.uk](mailto:beam.suwiwatchai21@imperial.ac.uk)
 
-Issac Siy - issac.siy21@imperial.ac.uk
+Issac Siy - [issac.siy21@imperial.ac.uk](mailto:issac.siy21@imperial.ac.uk)
 
 <!-- ACKNOWLEDGMENTS -->
 ## Acknowledgments

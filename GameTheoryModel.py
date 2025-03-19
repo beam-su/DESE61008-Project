@@ -12,11 +12,10 @@ class GameTheoryModel:
         self.bounds = bounds if bounds else [(0, 50)] * n
 
     def demand_function(self, Q):
-        """Computes price given total quantity Q"""
-        return max((self.alpha - Q) / self.beta, 0)
+        return max(self.alpha - self.beta * Q, 0)
+
 
     def cost_function(self, q, beta):
-        """Computes cost for a firm"""
         return beta * q
 
 class CournotGame(GameTheoryModel):
@@ -24,11 +23,11 @@ class CournotGame(GameTheoryModel):
         super().__init__(**kwargs)
 
     def best_response(self, q_others, beta):
-        """Computes the best response function for a firm in n-player Cournot competition"""
+        """Best reponse for n players"""
         return max((self.alpha - sum(q_others) - self.beta * beta) / self.n, 0)  # Generalized for n players
 
     def equilibrium(self, tol=1e-4):
-        """Finds Nash equilibrium using an iterative best response method for any number of firms"""
+        """Iterative response to for nash equilibrium"""
         quantities = np.array(self.initial_guess)
         error = 1
 
