@@ -9,6 +9,7 @@ DESE61008 Game Theory and Mechanism Coursework: Cournot and Stackelberg games
 - **`Cournot_BaseModel.py`**: Simulation of Cournot Game under the given initial conditions
 - **`Cournot_costeff.py`**: Simulation of Cournot Game wiht varying cost efficiency
 - **`Cournot_Cartel.py`**: Extension task to see the relationship between cartel's profit and varying number of firms (and cheaters performance)
+- **`StakelbergExploration.py`**: Simulation of Stackelberg Game under the given initial conditions
 
 
 <!-- CONTACT -->
