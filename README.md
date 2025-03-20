@@ -15,7 +15,7 @@ DESE61008 Game Theory and Mechanism Coursework: Cournot and Stackelberg games
 ## Contact
 Raphassit (Beam) Suwiwatchai - [beam.suwiwatchai21@imperial.ac.uk](mailto:beam.suwiwatchai21@imperial.ac.uk)
 
-Issac Siy - [issac.siy21@imperial.ac.uk](mailto:issac.siy21@imperial.ac.uk)
+Isaac Siy - [isaac.siy21@imperial.ac.uk](mailto:isaac.siy21@imperial.ac.uk)
 
 <!-- ACKNOWLEDGMENTS -->
 ## Acknowledgments
